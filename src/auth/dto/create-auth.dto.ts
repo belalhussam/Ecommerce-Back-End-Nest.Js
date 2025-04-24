@@ -37,3 +37,15 @@ export class ResetPasswordDto {
   @IsEmail({}, { message: 'Email is not valid' })
   email: string;
 }
+export class VerfiyDto {
+  // Email
+  @IsString({ message: 'Email must be a string' })
+  @MinLength(0, { message: 'Thie Email Must be Required' })
+  @IsEmail({}, { message: 'Email is not valid' })
+  email: string;
+  // code
+  @IsString({ message: 'code must be a string' })
+  @MinLength(0, { message: 'Thie code Must be Required' })
+  @MaxLength(6, { message: 'code must be at least 6 characters' })
+  code: string;
+}
