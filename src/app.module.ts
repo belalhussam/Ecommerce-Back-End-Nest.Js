@@ -4,6 +4,9 @@ import { UserModule } from './user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { CategoryModule } from './category/category.module';
+import { SubCategoryModule } from './sub-category/sub-category.module';
+import { BrandModule } from './brand/brand.module';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
         },
       },
     }),
+    CategoryModule,
+    SubCategoryModule,
+    BrandModule,
   ],
   controllers: [],
   providers: [],

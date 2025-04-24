@@ -82,6 +82,9 @@ export class UserMeController {
   getUserMe(@Req() req) {
     return this.userService.getUserMe(req.user);
   }
+  // @dec user and user Can find User
+  // @Route update api/v1/user
+  // @access public[user,admin]
   @Patch()
   @Roles(['user', 'admin'])
   updayeUserMe(
@@ -91,6 +94,9 @@ export class UserMeController {
   ) {
     return this.userService.updayeUserMe(req.user, UpdateUserDto);
   }
+  // @dec user and user Can find User
+  // @Route delete api/v1/user
+  // @access public[user,admin]
   @Delete()
   @Roles(['user', 'admin'])
   deleteUserMe(@Req() req) {
