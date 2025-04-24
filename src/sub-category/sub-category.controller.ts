@@ -7,18 +7,23 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { SubCategoryService } from './sub-category.service';
 import { SubCreateCategoryDto } from './dto/create-sub-category.dto';
 import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
+import { AuthGuard } from 'src/user/guard/Auth.guard';
+import { Roles } from 'src/user/decorator/role-decorator';
 
 @Controller('subcategory')
+@UseGuards(AuthGuard)
 export class SubCategoryController {
   constructor(private readonly subCategoryService: SubCategoryService) {}
   // @dec  find SubCategory
   // @Route find api/v1/SubCategory
   // @access private[admin]
   @Post()
+  @Roles(['admin'])
   create(
     @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
     SubCreateCategoryDto: SubCreateCategoryDto,
@@ -29,6 +34,7 @@ export class SubCategoryController {
   // @Route find api/v1/SubCategory
   // @access private[admin]
   @Get()
+  @Roles(['admin'])
   findAll() {
     return this.subCategoryService.findAll();
   }
@@ -36,6 +42,7 @@ export class SubCategoryController {
   // @Route find api/v1/SubCategory
   // @access public
   @Get(':id')
+  @Roles(['admin', 'user'])
   findOne(@Param('id') id: string) {
     return this.subCategoryService.findOne(id);
   }
@@ -43,6 +50,7 @@ export class SubCategoryController {
   // @Route update api/v1/SubCategory
   // @access private[admin]
   @Patch(':id')
+  @Roles(['admin'])
   update(
     @Param('id') id: string,
     @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
@@ -54,6 +62,7 @@ export class SubCategoryController {
   // @Route delete api/v1/SubCategory
   // @access private[admin]
   @Delete(':id')
+  @Roles(['admin'])
   remove(@Param('id') id: string) {
     return this.subCategoryService.remove(id);
   }
