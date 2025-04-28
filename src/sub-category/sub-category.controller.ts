@@ -8,6 +8,7 @@ import {
   Delete,
   ValidationPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { SubCategoryService } from './sub-category.service';
 import { SubCreateCategoryDto } from './dto/create-sub-category.dto';
@@ -35,7 +36,7 @@ export class SubCategoryController {
   // @access private[admin]
   @Get()
   @Roles(['admin'])
-  findAll() {
+  findAll(@Query() query) {
     return this.subCategoryService.findAll();
   }
   // @dec  find SubCategory

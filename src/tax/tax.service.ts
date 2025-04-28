@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTexDto } from './dto/create-tax.dto';
+import { CreateTaxDto } from './dto/create-tax.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Tax } from './tax-schema';
 import { Model } from 'mongoose';
@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 @Injectable()
 export class TaxService {
   constructor(@InjectModel(Tax.name) private readonly taxModel: Model<Tax>) {}
-  async createOrUpdate(createTexDto: CreateTexDto) {
+  async createOrUpdate(createTexDto: CreateTaxDto) {
     const tax = await this.taxModel.find();
     if (!tax) {
       // Create New Tax

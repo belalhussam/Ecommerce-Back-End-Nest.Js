@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Delete, UseGuards } from '@nestjs/common';
 import { TaxService } from './tax.service';
-import { CreateTexDto } from './dto/create-tax.dto';
+import { CreateTaxDto } from './dto/create-tax.dto';
 import { Roles } from 'src/user/decorator/role-decorator';
 import { AuthGuard } from 'src/user/guard/Auth.guard';
 
@@ -14,7 +14,7 @@ export class TaxController {
   @Post()
   @Roles(['admin'])
   @UseGuards(AuthGuard)
-  create(@Body() createTexDto: CreateTexDto) {
+  create(@Body() createTexDto: CreateTaxDto) {
     return this.texService.createOrUpdate(createTexDto);
   }
 

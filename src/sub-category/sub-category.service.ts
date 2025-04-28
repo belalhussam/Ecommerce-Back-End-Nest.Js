@@ -72,7 +72,7 @@ export class SubCategoryService {
     }
     const updatedSubCategory = await this.subCategoryModel
       .findByIdAndUpdate(id, updateSubCategoryDto, { new: true })
-      .select('-__V')
+      .select('-__v')
       .populate('category', '-_id -__v');
     return {
       status: 200,

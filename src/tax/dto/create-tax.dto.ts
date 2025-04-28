@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional } from 'class-validator';
 
-export class CreateTexDto {
+export class CreateTaxDto {
   @IsNumber({}, { message: 'taxPrice must be a number' })
   @IsOptional()
   taxPrice: number;
