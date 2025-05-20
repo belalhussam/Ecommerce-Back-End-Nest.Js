@@ -13,6 +13,8 @@ import { RequestProductModule } from './request-product/request-product.module';
 import { TaxModule } from './tax/tax.module';
 import { ProductModule } from './product/product.module';
 import { ReviewModule } from './review/review.module';
+import { UploadFilesModule } from './upload-files/upload-files.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { ReviewModule } from './review/review.module';
     TaxModule,
     ProductModule,
     ReviewModule,
+    UploadFilesModule,
+    CartModule,
   ],
   controllers: [],
   providers: [],

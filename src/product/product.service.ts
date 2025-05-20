@@ -40,6 +40,13 @@ export class ProductService {
         throw new HttpException('This subCategory not Exist', 400);
       }
     }
+    const priceAfterDiscount = createProductDto?.priceAfterDiscount || 0;
+    if (createProductDto.price < priceAfterDiscount) {
+      throw new HttpException(
+        'Must be price After discount greater than price',
+        400,
+      );
+    }
     const newProduct = await (
       await this.productModel.create(createProductDto)
     ).populate('category subCategory brand', '-__v');
@@ -63,7 +70,6 @@ export class ProductService {
         (match) => `$${match}`,
       ),
     );
-    console.log(requestQuery);
     // 2) pagenation
     const page = query?.page || 1;
     const limit = query?.limit || 5;
@@ -71,7 +77,7 @@ export class ProductService {
 
     // 3) sorting
     // eslint-disable-next-line prefer-const
-    let sort = query?.sort || 'asc';
+    let sort = query?.sort || 'title';
     if (!['asc', 'desc'].includes(sort)) {
       throw new HttpException('Invalid sort', 400);
     }
@@ -135,7 +141,11 @@ export class ProductService {
         throw new HttpException('This Category not Exist', 400);
       }
     }
-
+    const priceAfterDiscount =
+      updateProductDto.priceAfterDiscount || product?.priceAfterDiscount;
+    const price = updateProductDto.price || product?.price;
+    if (price < priceAfterDiscount) {
+    }
     if (updateProductDto.subCategory) {
       const subCategory = await this.subCategorytModel.findById(
         updateProductDto.subCategory,

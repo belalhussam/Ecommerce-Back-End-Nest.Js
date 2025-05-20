@@ -150,9 +150,7 @@ export class UserService {
     if (!payload._id) {
       throw new NotFoundException(400, 'User not found');
     }
-    const user = await this.userModel.findById(payload._id, {
-      active: false,
-    });
+    const user = await this.userModel.findById(payload._id);
     if (!user) {
       throw new NotFoundException(400, 'User not found');
     }
