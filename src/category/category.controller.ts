@@ -14,6 +14,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { AuthGuard } from 'src/user/guard/Auth.guard';
 import { Roles } from 'src/user/decorator/role-decorator';
+import { I18n, I18nContext } from 'nestjs-i18n';
 
 @Controller('category')
 @UseGuards(AuthGuard)

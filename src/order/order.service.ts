@@ -7,6 +7,7 @@ import { Tax } from 'src/tax/tax-schema';
 import { Cart } from 'src/cart/cart.schema';
 import { Product } from 'src/product/product-schema';
 import { MailerService } from '@nestjs-modules/mailer';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const stripe = require('stripe')(
   `sk_test_51RGZqePcok6RK5CFv9aqDv8oTZdeqlnBL2mQ9IwEf7j1x5N8DOj5UCDNdRccQaL3AJCduQc6qMbZKQnQcOibHMIL00qGeIMg8N`,
 );
@@ -146,6 +147,77 @@ export class OrderService {
         totalPrice: session.amount_total,
         data: order,
       },
+    };
+  }
+  async updatePaidCash(orderId: string, updateOrderDto: AcceptOrderCashDto) {
+    const order = await this.orderModel.findById(orderId);
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    if (order.paymentMethodType !== 'cash') {
+      throw new NotFoundException('This order not paid by cash');
+    }
+
+    if (order.isPaid) {
+      throw new NotFoundException('Order already paid');
+    }
+
+    if (updateOrderDto.isPaid) {
+      updateOrderDto.paidAt = new Date();
+      const cart = await this.cartModel
+        .findOne({ user: order.user.toString() })
+        .populate('cartItems.productId user');
+      // @ts-ignore
+      cart.cartItems.forEach(async (item) => {
+        await this.productModel.findByIdAndUpdate(
+          item.productId,
+          { $inc: { quantity: -item.quantity, sold: item.quantity } },
+          { new: true },
+        );
+      });
+      // reset Cart
+      await this.cartModel.findOneAndUpdate(
+        { user: order.user.toString() },
+        { cartItems: [], totalPrice: 0 },
+      );
+      // send mail
+      const htmlMessage = `
+    <html>
+      <body>
+        <h1>Order Confirmation</h1>
+        <p>Dear</p>
+        <p>Thank you for your purchase! Your order has been successfully placed and paid for with cash.</p>
+        <p>We appreciate your business and hope you enjoy your purchase!</p>
+        <p>Best regards,</p>
+        <p>The Ecommerce-Nest.JS Team</p>
+      </body>
+    </html>
+    `;
+      await this.mailService.sendMail({
+        from: `Ecommerce-Nest.JS <${process.env.MAIL_USER}>`,
+        // eslint-disable-next-line
+        // @ts-ignore
+        to: cart.user.email,
+        subject: `Ecommerce-Nest.JS - Checkout Order`,
+        html: htmlMessage,
+      });
+    }
+
+    if (updateOrderDto.isDeliverd) {
+      updateOrderDto.deliverdAt = new Date();
+    }
+
+    const updatedOrder = await this.orderModel.findByIdAndUpdate(
+      orderId,
+      { ...updateOrderDto },
+      { new: true },
+    );
+
+    return {
+      status: 200,
+      message: 'Order updated successfully',
+      data: updatedOrder,
     };
   }
 

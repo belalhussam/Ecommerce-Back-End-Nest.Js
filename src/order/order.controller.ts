@@ -17,7 +17,6 @@ import { OrderService } from './order.service';
 import { AcceptOrderCashDto, CreateOrderDto } from './dto/create-order.dto';
 import { AuthGuard } from 'src/user/guard/Auth.guard';
 import { Roles } from 'src/user/decorator/role-decorator';
-
 @Controller('cart/checkout')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
@@ -53,6 +52,19 @@ export class OrderController {
       paymentMethodType,
       dataAfterPayment,
     );
+  }
+  //  @docs   Admin Can Update Order payment cash
+  //  @Route  PATCH /api/v1/cart/checkout/:orderId/cash
+  //  @access Private [User]
+  @Patch(':orderId/cash')
+  @Roles(['admin'])
+  @UseGuards(AuthGuard)
+  updatePaidCash(
+    @Param('orderId') orderId: string,
+    @Body(new ValidationPipe({ forbidNonWhitelisted: true, whitelist: true }))
+    updateOrderDto: AcceptOrderCashDto,
+  ) {
+    return this.orderService.updatePaidCash(orderId, updateOrderDto);
   }
 }
 @Controller('order/user')
