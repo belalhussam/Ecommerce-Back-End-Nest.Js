@@ -23,9 +23,20 @@ import {
   QueryResolver,
 } from 'nestjs-i18n';
 import { join } from 'path';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { OAuthController } from './oauth/oauth.controller';
+import { OAuthModule } from './oauth/oauth.module';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
+    }),
     I18nModule.forRoot({
       fallbackLanguage: 'en',
       loaderOptions: {
@@ -42,6 +53,7 @@ import { join } from 'path';
     MongooseModule.forRoot(`${process.env.DATABASE_URL}`),
     UserModule,
     AuthModule,
+    OAuthModule,
     MailerModule.forRoot({
       transport: {
         service: 'gmail',

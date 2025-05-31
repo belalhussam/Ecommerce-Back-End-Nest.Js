@@ -41,14 +41,24 @@ export class AuthService {
       email: user.email,
       role: user.role,
     };
-    const token = await this.JwtService.sign(payload, {
+    const access_token = await this.JwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
     });
-
+    // create secret refresh token
+    // create payload refresh token
+    // create refresh token
+    const refresh_token = await this.JwtService.signAsync(
+      { ...payload, countEX: 5 },
+      {
+        secret: process.env.JWT_SECRET_REFRESH_TOKEN,
+        expiresIn: '7d',
+      },
+    );
     return {
       status: 200,
       data: user,
-      access_token: token,
+      access_token: access_token,
+      refresh_token: refresh_token,
     };
   }
   async signIn(signInDto: SignInDto) {
@@ -67,13 +77,24 @@ export class AuthService {
       email: user.email,
       role: user.role,
     };
-    const token = await this.JwtService.sign(payload, {
+    const access_token = await this.JwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
     });
+    // create secret refresh token
+    // create payload refresh token
+    // create refresh token
+    const refresh_token = await this.JwtService.signAsync(
+      { ...payload, countEX: 5 },
+      {
+        secret: process.env.JWT_SECRET_REFRESH_TOKEN,
+        expiresIn: '7d',
+      },
+    );
     return {
       status: 200,
-      message: 'User logged in successfully',
-      access_token: token,
+      data: user,
+      access_token: access_token,
+      refresh_token: refresh_token,
     };
   }
   async resetPassword({ email }: ResetPasswordDto) {
@@ -141,6 +162,43 @@ export class AuthService {
     return {
       status: 200,
       message: 'Password changed successfully, go to login',
+    };
+  }
+  async refreshToken(refreshToken) {
+    const payload = await this.JwtService.verify(refreshToken, {
+      secret: process.env.JWT_SECRET_REFRESH_TOKEN,
+    });
+    if (!payload || payload.countEX <= 0) {
+      throw new UnauthorizedException(
+        'Invalid refresh token, please go to sign in',
+      );
+    }
+    const { exp, ...newPayload } = payload;
+    const newPayoadForAccessToken = {
+      _id: newPayload._id,
+      email: newPayload.email,
+      role: newPayload.role,
+    };
+
+    // create access token
+    const access_token = await this.JwtService.signAsync(
+      newPayoadForAccessToken,
+      {
+        secret: process.env.JWT_SECRET,
+      },
+    );
+    const refresh_token = await this.JwtService.signAsync(
+      { ...newPayload, countEx: payload.countEX - 1 },
+      {
+        secret: process.env.JWT_SECRET_REFRESH_TOKEN,
+        expiresIn: '7d',
+      },
+    );
+    return {
+      status: 200,
+      message: 'Refresh Access token successfully',
+      access_token,
+      refresh_token,
     };
   }
 }

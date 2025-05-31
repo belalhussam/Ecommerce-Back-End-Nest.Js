@@ -1,4 +1,4 @@
-import { Controller, Post, Body, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Body, ValidationPipe, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ResetPasswordDto,
@@ -59,5 +59,12 @@ export class AuthController {
     changePassword: SignInDto,
   ) {
     return this.authService.changePassword(changePassword);
+  }
+  //  @docs   Any User Can loged can refresh token
+  //  @Route  POST /api/v1/auth/refresh-token/:refresh_token
+  //  @access Private for users=> admin, user (loged)
+  @Post('refreshtToken/:refreshToken')
+  refreshToken(@Param('refreshToken') refreshToken) {
+    return this.authService.refreshToken(refreshToken);
   }
 }
