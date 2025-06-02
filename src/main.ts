@@ -13,9 +13,12 @@ async function bootstrap() {
   // start Security
   app.use(helmet());
   app.enableCors({
-    origin: ['https://ecommerce-nestjs.com', 'http://localhost:4000'],
+    origin: true, // Allow all origins in development
+    credentials: true,
   });
   // end Security
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
