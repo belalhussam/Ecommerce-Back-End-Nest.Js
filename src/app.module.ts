@@ -49,7 +49,13 @@ import { OAuthModule } from './oauth/oauth.module';
         new HeaderResolver(['x-lang']),
       ],
     }),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath:
+        process.env.NODE_ENV !== 'production'
+          ? `.env.${process.env.NODE_ENV}`
+          : '.env',
+    }),
     MongooseModule.forRoot(`${process.env.DATABASE_URL}`),
     UserModule,
     AuthModule,
